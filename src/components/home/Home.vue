@@ -10,7 +10,11 @@
     <ul class="pictures-list">
       <li class="pictures-list-item" v-for="picture of filteredPictures">
         <my-panel :title="picture.titulo">
-          <responsive-image :url="picture.url" :titulo="picture.titulo" />
+          <responsive-image
+            v-my-transform:scale.animate="1.2"
+            :url="picture.url"
+            :titulo="picture.titulo"
+          />
           <my-button
             buttontype="button"
             buttonlabel="REMOVER"
