@@ -16,6 +16,9 @@
             :url="picture.url"
             :titulo="picture.titulo"
           />
+          <router-link :to="{ name: 'altera', params: { id: picture._id } }">
+            <my-button buttontype="button" buttonlabel="ALTERAR" />
+          </router-link>
           <my-button
             buttontype="button"
             buttonlabel="REMOVER"
@@ -68,8 +71,7 @@ export default {
           this.message = 'Foto removida com sucesso';
         },
         (err) => {
-          console.log(err);
-          this.message = 'Não foi possível remover';
+          this.message = err.message;
         }
       );
     },
@@ -80,7 +82,7 @@ export default {
 
     this.service.list().then(
       (pictures) => (this.pictures = pictures),
-      (err) => console.log(err)
+      (err) => (this.message = err.message)
     );
   },
 };

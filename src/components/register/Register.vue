@@ -3,6 +3,9 @@
     <h1 class="centralized">Cadastro</h1>
     <h2 class="centralized">{{ picture.titulo }}</h2>
 
+    <h2 v-if="picture._id" class="centralized">Alterando</h2>
+    <h2 v-else class="centralized">Inlcuindo</h2>
+
     <form @submit.prevent="record()">
       <div class="control">
         <label for="titulo">TÍTULO</label>
@@ -49,18 +52,25 @@ export default {
   data() {
     return {
       picture: new Picture(),
+      id: this.$route.params.id,
     };
   },
   methods: {
     record() {
       this.service.register(this.picture).then(
-        () => (this.picture = new Picture()),
+        () => {
+          if (this.id) this.$router.push({ name: 'home' });
+          this.picture = new Picture();
+        },
         (err) => console.log(err)
       );
     },
   },
   created() {
     this.service = new PictureService(this.$resource);
+    if (this.id) {
+      this.service.search(this.id).then((picture) => (this.picture = picture));
+    }
   },
 };
 </script>
