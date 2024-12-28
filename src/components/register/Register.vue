@@ -27,7 +27,7 @@
 
       <div class="centralized">
         <my-button buttonlabel="GRAVAR" buttontype="submit" />
-        <router-link to="/">
+        <router-link :to="{ name: 'home' }">
           <my-button buttonlabel="VOLTAR" buttontype="button" />
         </router-link>
       </div>
@@ -39,6 +39,7 @@
 import ResponsiveImage from '../shared/responsive-image/ResponsiveImage.vue';
 import Button from '../shared/button/Button.vue';
 import Picture from '../../domain/picture/Picture';
+import PictureService from '../../domain/picture/PictureService';
 
 export default {
   components: {
@@ -52,11 +53,14 @@ export default {
   },
   methods: {
     record() {
-      this.$http.post('http://localhost:3000/v1/fotos', this.picture).then(
+      this.service.register(this.picture).then(
         () => (this.picture = new Picture()),
         (err) => console.log(err)
       );
     },
+  },
+  created() {
+    this.service = new PictureService(this.$resource);
   },
 };
 </script>

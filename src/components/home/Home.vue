@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1 class="centralized-text">{{ title }}</h1>
+    <p v-show="message" class="centralized-text">{{ message }}</p>
     <input
       type="search"
       class="filter"
@@ -19,7 +20,7 @@
             buttontype="button"
             buttonlabel="REMOVER"
             @buttonActivated="remove(picture)"
-            :confirmation="false"
+            :confirmation="true"
             buttonstyle="warning"
           />
         </my-panel>
@@ -32,6 +33,7 @@
 import Panel from '../shared/panel/Panel.vue';
 import ResponsiveImage from '../shared/responsive-image/ResponsiveImage.vue';
 import Button from '../shared/button/Button.vue';
+import PictureService from '../../domain/picture/PictureService';
 
 export default {
   components: {
@@ -44,6 +46,7 @@ export default {
       title: 'Alurapic',
       pictures: [],
       filter: '',
+      message: '',
     };
   },
   computed: {
@@ -58,15 +61,27 @@ export default {
 
   methods: {
     remove(picture) {
-      alert(`Removi a foto: ${picture.titulo}`);
+      this.service.remove(picture._id).then(
+        () => {
+          let index = this.pictures.indexOf(picture);
+          this.pictures.splice(index, 1);
+          this.message = 'Foto removida com sucesso';
+        },
+        (err) => {
+          console.log(err);
+          this.message = 'Não foi possível remover';
+        }
+      );
     },
   },
 
   created() {
-    let promise = this.$http.get('http://localhost:3000/v1/fotos');
-    promise
-      .then((res) => res.json())
-      .then((pictures) => (this.pictures = pictures));
+    this.service = new PictureService(this.$resource);
+
+    this.service.list().then(
+      (pictures) => (this.pictures = pictures),
+      (err) => console.log(err)
+    );
   },
 };
 </script>
